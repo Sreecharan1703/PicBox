@@ -1,4 +1,8 @@
 spring:
+  application:
+    name: picbox
+  config:
+    import: optional:file:secrets.env[.properties]
   servlet:
     multipart:
       max-file-size: 10MB
@@ -8,8 +12,8 @@ spring:
       client:
         registration:
           google:
-            client-id: secrets.env.CLIENT_ID
-            client-secret: secrets.env.CLIENT_SECRET
+            client-id: ${CLIENT_ID}
+            client-secret: ${CLIENT_SECRET}
             scope:
               - email
               - profile
