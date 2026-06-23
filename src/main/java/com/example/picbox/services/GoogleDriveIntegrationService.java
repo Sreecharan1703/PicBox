@@ -9,6 +9,7 @@ import com.google.api.services.drive.model.FileList;
 import com.google.auth.http.HttpCredentialsAdapter;
 import com.google.auth.oauth2.AccessToken;
 import com.google.auth.oauth2.GoogleCredentials;
+
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,6 +20,12 @@ import java.util.List;
 
 @Service
 public class GoogleDriveIntegrationService {
+
+    aiService aiservice;
+
+    GoogleDriveIntegrationService(aiService aiservice) {
+        this.aiservice = aiservice;
+    }
 
     private Drive getDriveService(OAuth2AuthorizedClient client) throws Exception {
         String tokenValue = client.getAccessToken().getTokenValue();
@@ -61,9 +68,7 @@ public class GoogleDriveIntegrationService {
         Drive driveService = getDriveService(client);
         
         String folderId = getOrCreatePicboxFolder(client);
-        
         String query = "'" + folderId + "' in parents and trashed=false";
-
         FileList result = driveService.files().list()
                 .setQ(query)
                 .setPageSize(10)
@@ -104,4 +109,16 @@ public class GoogleDriveIntegrationService {
         driveService.files().get(fileId).executeMediaAndDownloadTo(outputStream);
         return outputStream.toByteArray();
     }
+
+    public List<File> searchFilesByName(OAuth2AuthorizedClient client, String name) throws Exception {
+        List<File> allFiles = getDriveFiles(client); 
+        String[] filenames = aiservice.searchfeature(allFiles, name);
+
+        List<File> outputFileList = allFiles.stream()
+                .filter(file -> file.getName() != null && java.util.Arrays.asList(filenames).contains(file.getName()))
+                .toList();
+
+        return outputFileList;
+    }
+
 }

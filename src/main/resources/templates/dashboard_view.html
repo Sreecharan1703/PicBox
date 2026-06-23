@@ -23,7 +23,6 @@
             <a th:if="${!file.mimeType.startsWith('application/vnd.google-apps')}" 
                th:href="@{/download/{id}(id=${file.id})}">[Download]</a>
             <br>
-            <small>ID: <span th:text="${file.id}">123</span></small>
         </li>
     </ul>
 

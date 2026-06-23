@@ -1,6 +1,12 @@
 package com.example.picbox.controllers;
 
 import com.example.picbox.services.GoogleDriveIntegrationService;
+import com.google.api.services.drive.model.File;
+
+import lombok.var;
+
+import java.util.List;
+
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -13,6 +19,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+
 
 @Controller
 public class DriveWebController {
@@ -75,4 +83,21 @@ public class DriveWebController {
             return ResponseEntity.internalServerError().build();
         }
     }
+
+    @GetMapping("/searchfiles")
+    public ResponseEntity<String> search(@RequestParam String name, Model model,
+        @RegisteredOAuth2AuthorizedClient("google") OAuth2AuthorizedClient authorizedClient
+    ) {
+        try {
+            List<File> files = driveService.searchFilesByName(authorizedClient, name);
+            if(files.isEmpty()) {
+                return ResponseEntity.status(404).body("No files found with name: " + name);
+            }   
+            model.addAttribute("files", files);
+            return ResponseEntity.ok("Found " + files.size() + " files with similar name: " + name);
+        } catch (Exception e) {
+            return ResponseEntity.status(404).body("No files found with name: " + name);
+        }
+    }
+    
 }

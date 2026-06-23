@@ -12,11 +12,11 @@ public class WebSecurityConfiguration {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/login", "/home" , "/main").permitAll()
+                .requestMatchers("/", "/login", "/home").permitAll()
                 .anyRequest().authenticated()
             )
             .oauth2Login(oauth2 -> oauth2
-                .defaultSuccessUrl("/dashboard", true)
+                .defaultSuccessUrl("/main", true)
             )
             .logout(logout -> logout
                 .logoutSuccessUrl("/")
