@@ -57,11 +57,11 @@ public class DriveWebController {
     @PostMapping("/upload")
     public String uploadFile(
             @RequestParam("file") MultipartFile file,
-            @RequestParam("tags") String tags,
             @RegisteredOAuth2AuthorizedClient("google") OAuth2AuthorizedClient authorizedClient,
+            @RequestParam("description") String description,
             Model model) {
         try {
-            driveService.uploadFile(authorizedClient, file , tags);
+            driveService.uploadFile(authorizedClient, file, description);
         } catch (Exception e) {
             model.addAttribute("error", "Upload failed: " + e.getMessage());
         }

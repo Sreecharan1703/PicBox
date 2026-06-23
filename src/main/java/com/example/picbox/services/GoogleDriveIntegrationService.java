@@ -77,13 +77,15 @@ public class GoogleDriveIntegrationService {
         return result.getFiles();
     }
 
-    public String uploadFile(OAuth2AuthorizedClient client, MultipartFile multipartFile, String tags) throws Exception {
+    public String uploadFile(OAuth2AuthorizedClient client,
+        MultipartFile multipartFile,String description) throws Exception {
+
         Drive driveService = getDriveService(client);
         String folderId = getOrCreatePicboxFolder(client);
         
         File fileMetadata = new File();
         fileMetadata.setName(multipartFile.getOriginalFilename());
-        fileMetadata.setDescription(tags);
+        fileMetadata.setDescription(description);
 
         fileMetadata.setParents(Collections.singletonList(folderId));
 

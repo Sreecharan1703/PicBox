@@ -5,7 +5,10 @@ import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.stereotype.Service;
 import com.google.api.services.drive.model.File;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class aiService {
 
     private final ChatClient chatClient;
@@ -14,37 +17,28 @@ public class aiService {
         this.chatClient = chatClientBuilder.build();
     }
 
-    public String generateResponse(String prompt) {
-        return this.chatClient.prompt()
-                .user(prompt)
-                .call()
-                .content(); 
-    }
-
     public String[] searchfeature(List<File> allFiles, String name) {
-        
-        String prompt = "Find files semantically related to the concept of '" + name + "'. " +
-        "Use broad semantic matching (e.g., if the search is 'bird', include files named or tagged 'peacock', 'eagle', etc.). " +
+
+        String prompt = "Find files sementically related to the concept of '" + name + "'. " +
+        "Use broad semantic matching (e.g., if the search is 'bird', include files that match 'peacock', 'eagle', etc.). " +
         "Here is the list of file metadata: " + allFiles.toString() + ". " +
         "Return ONLY a valid matching file names separated by commas. " +
         "Do not include any markdown formatting, conversational text, or explanations.";
 
         try {
-            String Jsonresponse = this.chatClient.prompt()
+            String aiResponse = this.chatClient.prompt()
                     .user(prompt)
                     .call()
                     .content();
 
-            System.out.println("AI Response: " + Jsonresponse);
-
-            String[] matchingFileNames = Jsonresponse.split(",");
+            String[] matchingFileNames = aiResponse.split(",");
             for (int i = 0; i < matchingFileNames.length; i++) {
                 matchingFileNames[i] = matchingFileNames[i].trim();
             }
             return matchingFileNames;
 
         } catch (Exception ex) {
-            System.err.println("Error during AI response generation: " + ex.getMessage());
+            log.error("Error during AI response generation: " + ex.getMessage());
             return new String[0]; 
         }
     }

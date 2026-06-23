@@ -3,10 +3,112 @@
 <head>
     <meta charset='utf-8'>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
-    <title>main</title>
+    <title>Main</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f1f8f4;
+            color: #14211a;
+            min-height: 100vh;
+        }
+        .nav {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 22px 60px; background: #fff; border-bottom: 1px solid #e3ede6;
+        }
+        .logo {
+            font-size: 24px; font-weight: 800; color: #16a34a;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .logo::before {
+            content: ""; width: 22px; height: 22px;
+            background: linear-gradient(135deg, #22c55e, #15803d);
+            clip-path: polygon(40% 0, 100% 0, 60% 100%, 0 100%);
+        }
+        .container {
+            max-width: 1000px;
+            margin: 80px auto;
+            padding: 0 24px;
+            text-align: center;
+        }
+        h1 {
+            font-size: 44px;
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+        h1 .accent { color: #16a34a; }
+        .subtitle {
+            color: #4a5d52;
+            font-size: 17px;
+            margin-bottom: 56px;
+        }
+        .cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 28px;
+        }
+        .card {
+            background: #fff;
+            border: 1px solid #e3ede6;
+            border-radius: 18px;
+            padding: 44px 32px;
+            cursor: pointer;
+            transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+            text-align: left;
+        }
+        .card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 40px rgba(22, 163, 74, 0.12);
+            border-color: #16a34a;
+        }
+        .icon {
+            width: 56px; height: 56px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #22c55e, #15803d);
+            display: flex; align-items: center; justify-content: center;
+            margin-bottom: 22px;
+            color: #fff;
+            font-size: 26px;
+            font-weight: 800;
+        }
+        .card h2 { font-size: 22px; margin-bottom: 8px; }
+        .card p { color: #4a5d52; font-size: 15px; margin-bottom: 22px; }
+        .card .go {
+            color: #16a34a;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        @media (max-width: 720px) {
+            .cards { grid-template-columns: 1fr; }
+            .nav { padding: 18px 24px; }
+            h1 { font-size: 32px; }
+        }
+    </style>
 </head>
 <body>
-    <button onclick="location.href='/addpic'">upload</button>
-    <button onclick="location.href='/gallery'">view gallery</button>
+    <nav class="nav">
+        <div class="logo">gallery</div>
+    </nav>
+
+    <div class="container">
+        <h1>What would you like to <span class="accent">do today?</span></h1>
+        <p class="subtitle">Choose an action to get started.</p>
+
+        <div class="cards">
+            <div class="card" onclick="location.href='/addpic'">
+                <div class="icon">↑</div>
+                <h2>Upload</h2>
+                <p>Add a new picture to your gallery and tag it for easy discovery later.</p>
+                <span class="go">Upload a picture →</span>
+            </div>
+            <div class="card" onclick="location.href='/gallery'">
+                <div class="icon">▦</div>
+                <h2>View Gallery</h2>
+                <p>Browse, search and download every picture you've stored.</p>
+                <span class="go">Open gallery →</span>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

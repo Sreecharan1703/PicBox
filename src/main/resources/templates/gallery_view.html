@@ -1,48 +1,206 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
     <title>Gallery</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f1f8f4;
+            color: #14211a;
+            min-height: 100vh;
+        }
+        .nav {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 22px 60px; background: #fff; border-bottom: 1px solid #e3ede6;
+        }
+        .logo {
+            font-size: 24px; font-weight: 800; color: #16a34a;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .logo::before {
+            content: ""; width: 22px; height: 22px;
+            background: linear-gradient(135deg, #22c55e, #15803d);
+            clip-path: polygon(40% 0, 100% 0, 60% 100%, 0 100%);
+        }
+        .nav-actions { display: flex; gap: 12px; align-items: center; }
+        .ghost-btn {
+            background: transparent;
+            color: #14211a;
+            border: 1px solid #d6e6dc;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 14px;
+        }
+        .ghost-btn:hover { border-color: #16a34a; color: #16a34a; }
+
+        .container { max-width: 1100px; margin: 48px auto; padding: 0 24px; }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 28px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        h1 { font-size: 36px; font-weight: 800; }
+        h1 .accent { color: #16a34a; }
+        .header p { color: #4a5d52; margin-top: 4px; font-size: 15px; }
+
+        .search-form {
+            display: flex;
+            gap: 8px;
+            background: #fff;
+            border: 1px solid #d6e6dc;
+            border-radius: 12px;
+            padding: 6px;
+            transition: border-color .15s ease, box-shadow .15s ease;
+        }
+        .search-form:focus-within {
+            border-color: #16a34a;
+            box-shadow: 0 0 0 3px rgba(22,163,74,0.15);
+        }
+        .search-form input {
+            border: none;
+            outline: none;
+            padding: 10px 14px;
+            font-size: 15px;
+            font-family: inherit;
+            background: transparent;
+            min-width: 240px;
+        }
+        .search-form button {
+            background: #16a34a;
+            color: #fff;
+            border: none;
+            padding: 10px 22px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        .search-form button:hover { background: #15803d; }
+
+        .alert {
+            padding: 14px 18px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .alert-error { background: #fde8e8; color: #b91c1c; border: 1px solid #f5c2c2; }
+        .alert-success { background: #e7f4ec; color: #15803d; border: 1px solid #b6dcc1; }
+
+        .files-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 18px;
+            list-style: none;
+        }
+        .file-card {
+            background: #fff;
+            border: 1px solid #e3ede6;
+            border-radius: 14px;
+            padding: 20px;
+            transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+        .file-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 14px 30px rgba(22,163,74,0.1);
+            border-color: #16a34a;
+        }
+        .thumb {
+            height: 120px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #d1f0db, #86d8a1);
+            display: flex; align-items: center; justify-content: center;
+            color: #15803d;
+            font-size: 36px;
+            font-weight: 800;
+        }
+        .file-name {
+            font-weight: 600;
+            font-size: 15px;
+            color: #14211a;
+            overflow-wrap: anywhere;
+        }
+        .download-link {
+            display: inline-block;
+            color: #16a34a;
+            font-weight: 600;
+            text-decoration: none;
+            font-size: 14px;
+            margin-top: auto;
+        }
+        .download-link:hover { text-decoration: underline; }
+
+        .divider { height: 1px; background: #e3ede6; margin: 28px 0; border: none; }
+
+        @media (max-width: 720px) {
+            .nav { padding: 18px 24px; }
+            .container { margin: 28px auto; }
+            h1 { font-size: 28px; }
+            .search-form input { min-width: 0; flex: 1; }
+        }
+    </style>
 </head>
 <body>
-    <h1>Welcome, <span th:text="${name}">User</span>!</h1>
+    <nav class="nav">
+        <div class="logo">gallery</div>
+        <div class="nav-actions">
+            <a class="ghost-btn" href="/main" style="text-decoration:none; display:inline-block;">← Menu</a>
+            <form th:action="@{/logout}" method="post" style="margin:0;">
+                <button class="ghost-btn" type="submit">Logout</button>
+            </form>
+        </div>
+    </nav>
 
-    <hr>
-    <hr>
+    <div class="container">
+        <div class="header">
+            <div>
+                <h1>Welcome, <span class="accent" th:text="${name}">User</span></h1>
+                <p>Browse your collection or search by name.</p>
+            </div>
+            <form class="search-form" action='/searchfiles' method='get'>
+                <input type='text' id='name' name='name' placeholder="Search your files…" required>
+                <button type='submit'>Search</button>
+            </form>
+        </div>
 
-    <form action='/searchfiles' method='get'>
-        <label for='name'>Search Files:</label>
-        <input type='text' id='name' name='name' required>
-        <button type='submit'>Search</button>
-    </form>
-    <br>
+        <div class="alert alert-error" th:if="${error}" th:text="${error}"></div>
+        <div class="alert alert-success" th:if="${searchresults}" th:text="${searchresults}"></div>
 
-    <div th:if="${error}" style="color:red; margin-bottom: 20px;" th:text="${error}"></div>
-    <div th:if="${searchresults}" style="color:green; margin-bottom: 20px;" th:text="${searchresults}"></div>
-    <hr>
-
-    <ul>
-        <li th:each="file : ${resultfiles}">
-            <strong th:text="${file.name}">File Name</strong> 
-            <a th:if="${!file.mimeType.startsWith('application/vnd.google-apps')}" 
-               th:href="@{/download/{id}(id=${file.id})}">[Download]</a>
-            <br>
-        </li>
-    </ul>
-    
-    <div th:if="${resultfiles == null}" style="margin-top: 20px; margin-bottom: 20px;">
-        <ul>
-            <li th:each="file : ${files}">
-                <strong th:text="${file.name}">File Name</strong> 
-                <a th:if="${!file.mimeType.startsWith('application/vnd.google-apps')}" 
-                th:href="@{/download/{id}(id=${file.id})}">[Download]</a>
-                <br>
+        <ul class="files-grid">
+            <li class="file-card" th:each="file : ${resultfiles}">
+                <div class="thumb">▦</div>
+                <div class="file-name" th:text="${file.name}">File Name</div>
+                <a class="download-link"
+                   th:if="${!file.mimeType.startsWith('application/vnd.google-apps')}"
+                   th:href="@{/download/{id}(id=${file.id})}">Download ↓</a>
             </li>
         </ul>
-    </div>
 
-    <br>
-    <form th:action="@{/logout}" method="post">
-        <button type="submit">Logout</button>
-    </form>
+        <div th:if="${resultfiles == null}">
+            <ul class="files-grid">
+                <li class="file-card" th:each="file : ${files}">
+                    <div class="thumb">▦</div>
+                    <div class="file-name" th:text="${file.name}">File Name</div>
+                    <a class="download-link"
+                       th:if="${!file.mimeType.startsWith('application/vnd.google-apps')}"
+                       th:href="@{/download/{id}(id=${file.id})}">Download ↓</a>
+                </li>
+            </ul>
+        </div>
+    </div>
 </body>
 </html>
