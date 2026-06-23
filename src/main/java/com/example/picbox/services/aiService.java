@@ -24,7 +24,7 @@ public class aiService {
     public String[] searchfeature(List<File> allFiles, String name) {
         
         String prompt = "Find files semantically related to the concept of '" + name + "'. " +
-        "Use broad semantic matching (e.g., if the search is 'bird', include files named 'peacock', 'eagle', etc.). " +
+        "Use broad semantic matching (e.g., if the search is 'bird', include files named or tagged 'peacock', 'eagle', etc.). " +
         "Here is the list of file metadata: " + allFiles.toString() + ". " +
         "Return ONLY a valid matching file names separated by commas. " +
         "Do not include any markdown formatting, conversational text, or explanations.";
