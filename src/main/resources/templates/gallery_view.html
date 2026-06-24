@@ -112,13 +112,27 @@
             transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
             display: flex;
             flex-direction: column;
-            gap: 14px;
+            gap: 12px;
+            position: relative;
         }
         .file-card:hover {
             transform: translateY(-3px);
             box-shadow: 0 14px 30px rgba(22,163,74,0.1);
             border-color: #16a34a;
         }
+        
+        /* Updated Checkbox Styles - Moved to Right */
+        .file-checkbox {
+            position: absolute;
+            top: 28px;
+            right: 28px;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #16a34a;
+            z-index: 10;
+        }
+
         .thumb {
             height: 120px;
             border-radius: 10px;
@@ -127,6 +141,7 @@
             color: #15803d;
             font-size: 36px;
             font-weight: 800;
+            position: relative;
         }
         .file-name {
             font-weight: 600;
@@ -134,15 +149,74 @@
             color: #14211a;
             overflow-wrap: anywhere;
         }
+        
+        /* Description and Actions Styles */
+        .description-box {
+            display: none;
+            font-size: 13px;
+            color: #4a5d52;
+            background: #f1f8f4;
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 4px;
+        }
+        .description-box.expanded { display: block; }
+        
+        /* New flex container for bottom actions */
+        .card-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto; /* Pushes actions to the bottom of the card */
+            padding-top: 8px;
+        }
+
+        .toggle-desc-btn {
+            background: none;
+            border: none;
+            color: #16a34a;
+            font-size: 13px;
+            font-weight: 600;
+            text-align: left;
+            cursor: pointer;
+            padding: 0;
+        }
+        .toggle-desc-btn:hover { text-decoration: underline; }
+
         .download-link {
             display: inline-block;
             color: #16a34a;
             font-weight: 600;
             text-decoration: none;
             font-size: 14px;
-            margin-top: auto;
         }
         .download-link:hover { text-decoration: underline; }
+
+        /* Floating Make Quiz Button */
+        .make-quiz-float-btn {
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            background: #16a34a;
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 800;
+            box-shadow: 0 8px 24px rgba(22,163,74,0.3);
+            cursor: pointer;
+            display: none;
+            z-index: 1000;
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+        .make-quiz-float-btn.visible {
+            display: block;
+        }
+        .make-quiz-float-btn:hover {
+            background: #15803d;
+            transform: translateY(-2px);
+        }
 
         .divider { height: 1px; background: #e3ede6; margin: 28px 0; border: none; }
 
@@ -151,6 +225,7 @@
             .container { margin: 28px auto; }
             h1 { font-size: 28px; }
             .search-form input { min-width: 0; flex: 1; }
+            .make-quiz-float-btn { bottom: 20px; right: 20px; padding: 14px 24px; }
         }
     </style>
 </head>
@@ -180,27 +255,93 @@
         <div class="alert alert-error" th:if="${error}" th:text="${error}"></div>
         <div class="alert alert-success" th:if="${searchresults}" th:text="${searchresults}"></div>
 
-        <ul class="files-grid">
+        <ul class="files-grid" th:if="${resultfiles != null}">
             <li class="file-card" th:each="file : ${resultfiles}">
-                <div class="thumb">▦</div>
+                <input type="checkbox" class="file-checkbox" th:value="${file.id}">
+                
+                <div class="thumb"><img th:src="@{/images/{id}(id=${file.id})}" height="100%" width="100%" alt="▦"></div>
                 <div class="file-name" th:text="${file.name}">File Name</div>
-                <a class="download-link"
-                   th:if="${!file.mimeType.startsWith('application/vnd.google-apps')}"
-                   th:href="@{/download/{id}(id=${file.id})}">Download ↓</a>
+                
+                <div class="description-box" th:text="${file.description != null ? file.description : 'No description available for this image.'}"></div>
+
+                <div class="card-actions">
+                    <button class="toggle-desc-btn" onclick="toggleDesc(this)">Show description</button>
+                    <a class="download-link"
+                       th:if="${!file.mimeType.startsWith('application/vnd.google-apps')}"
+                       th:href="@{/download/{id}(id=${file.id})}">Download ↓</a>
+                </div>
             </li>
         </ul>
 
         <div th:if="${resultfiles == null}">
             <ul class="files-grid">
                 <li class="file-card" th:each="file : ${files}">
-                    <div class="thumb">▦</div>
+                    <input type="checkbox" class="file-checkbox" th:value="${file.id}">
+                    
+                    <div class="thumb"><img th:src="@{/images/{id}(id=${file.id})}" height="100%" width="100%" alt="▦"></div>
                     <div class="file-name" th:text="${file.name}">File Name</div>
-                    <a class="download-link"
-                       th:if="${!file.mimeType.startsWith('application/vnd.google-apps')}"
-                       th:href="@{/download/{id}(id=${file.id})}">Download ↓</a>
+                    
+                    <div class="description-box" th:text="${file.description != null ? file.description : 'No description available for this image.'}"></div>
+
+                    <div class="card-actions">
+                        <button class="toggle-desc-btn" onclick="toggleDesc(this)">Show description</button>
+                        <a class="download-link"
+                           th:if="${!file.mimeType.startsWith('application/vnd.google-apps')}"
+                           th:href="@{/download/{id}(id=${file.id})}">Download ↓</a>
+                    </div>
                 </li>
             </ul>
         </div>
     </div>
+
+    <button id="makeQuizBtn" class="make-quiz-float-btn">Make Quiz</button>
+
+    <script>
+        // Task 1: Toggle description visibility (Updated logic)
+        function toggleDesc(btnElement) {
+            // Traverse up to the card, then find the specific description box
+            const card = btnElement.closest('.file-card');
+            const descBox = card.querySelector('.description-box');
+            
+            if (descBox.classList.contains('expanded')) {
+                descBox.classList.remove('expanded');
+                btnElement.textContent = "Show description";
+            } else {
+                descBox.classList.add('expanded');
+                btnElement.textContent = "Hide description";
+            }
+        }
+
+        // Task 2: Handle checkbox state and Quiz button logic
+        document.addEventListener('DOMContentLoaded', () => {
+            const checkboxes = document.querySelectorAll('.file-checkbox');
+            const makeQuizBtn = document.getElementById('makeQuizBtn');
+
+            const updateQuizButtonVisibility = () => {
+                const anyChecked = Array.from(checkboxes).some(cb => cb.checked);
+                if (anyChecked) {
+                    makeQuizBtn.classList.add('visible');
+                } else {
+                    makeQuizBtn.classList.remove('visible');
+                }
+            };
+
+            checkboxes.forEach(cb => {
+                cb.addEventListener('change', updateQuizButtonVisibility);
+            });
+
+            makeQuizBtn.addEventListener('click', () => {
+                const selectedIds = Array.from(checkboxes)
+                    .filter(cb => cb.checked)
+                    .map(cb => cb.value);
+
+                if (selectedIds.length > 0) {
+                    const params = new URLSearchParams();
+                    selectedIds.forEach(id => params.append('imageId', id));
+                    window.location.href = '/quiz?' + params.toString();
+                }
+            });
+        });
+    </script>
 </body>
 </html>

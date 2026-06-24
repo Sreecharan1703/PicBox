@@ -1,6 +1,7 @@
 package com.example.picbox.controllers;
 
 import com.example.picbox.services.GoogleDriveIntegrationService;
+import com.example.picbox.services.aiService;
 import com.google.api.services.drive.model.File;
 
 import lombok.var;
@@ -34,6 +35,27 @@ public class DriveWebController {
     @GetMapping("/login")
     public String index() {
         return "index_view";
+    }
+
+    @GetMapping("/images/{id}")
+    public ResponseEntity<Resource> getImage(
+            @PathVariable String id,
+            @RegisteredOAuth2AuthorizedClient("google") OAuth2AuthorizedClient authorizedClient) {
+        try {
+            byte[] imageData = driveService.downloadFile(authorizedClient, id);
+            ByteArrayResource resource = new ByteArrayResource(imageData);
+            
+            String fileName = driveService.getFileMetadata(authorizedClient, id).getName();
+            String imageType = fileName.endsWith(".png") ? "png" : "jpeg";
+
+            if(imageType.equals("png")) {
+                return ResponseEntity.ok().contentType(org.springframework.http.MediaType.IMAGE_PNG).body(resource);
+            } else{
+                return ResponseEntity.ok().contentType(org.springframework.http.MediaType.IMAGE_JPEG).body(resource);
+            } 
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @GetMapping("/gallery")
