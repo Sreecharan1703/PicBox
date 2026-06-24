@@ -72,7 +72,7 @@ public class GoogleDriveIntegrationService {
         FileList result = driveService.files().list()
                 .setQ(query)
                 .setPageSize(10)
-                .setFields("nextPageToken, files(id, name, mimeType)")
+                .setFields("nextPageToken, files(id, name, mimeType , description)")
                 .execute();
         return result.getFiles();
     }
@@ -102,7 +102,7 @@ public class GoogleDriveIntegrationService {
     }
 
     public File getFileMetadata(OAuth2AuthorizedClient client, String fileId) throws Exception {
-        return getDriveService(client).files().get(fileId).setFields("id, name, mimeType").execute();
+        return getDriveService(client).files().get(fileId).setFields("id, name, mimeType, description").execute();
     }
 
     public byte[] downloadFile(OAuth2AuthorizedClient client, String fileId) throws Exception {

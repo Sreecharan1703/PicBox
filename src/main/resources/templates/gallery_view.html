@@ -259,10 +259,13 @@
             <li class="file-card" th:each="file : ${resultfiles}">
                 <input type="checkbox" class="file-checkbox" th:value="${file.id}">
                 
+                <a th:href="@{/images/{id}(id=${file.id})}" target="_blank" style="text-decoration:none;">
                 <div class="thumb"><img th:src="@{/images/{id}(id=${file.id})}" height="100%" width="100%" alt="▦"></div>
+                </a>
+                
                 <div class="file-name" th:text="${file.name}">File Name</div>
                 
-                <div class="description-box" th:text="${file.description != null ? file.description : 'No description available for this image.'}"></div>
+                <div class="description-box" th:text="${file.description != null && file.description != '' ? file.description : 'No description available for this image.'}"></div>
 
                 <div class="card-actions">
                     <button class="toggle-desc-btn" onclick="toggleDesc(this)">Show description</button>
@@ -278,10 +281,13 @@
                 <li class="file-card" th:each="file : ${files}">
                     <input type="checkbox" class="file-checkbox" th:value="${file.id}">
                     
-                    <div class="thumb"><img th:src="@{/images/{id}(id=${file.id})}" height="100%" width="100%" alt="▦"></div>
+                    <a th:href="@{/images/{id}(id=${file.id})}" target="_blank" style="text-decoration:none;">
+                        <div class="thumb"><img th:src="@{/images/{id}(id=${file.id})}" height="100%" width="100%" alt="▦"></div>
+                    </a>
+
                     <div class="file-name" th:text="${file.name}">File Name</div>
                     
-                    <div class="description-box" th:text="${file.description != null ? file.description : 'No description available for this image.'}"></div>
+                    <div class="description-box" th:text="${file.description != null && file.description != '' ? file.description : 'No description available for this image.'}"></div>
 
                     <div class="card-actions">
                         <button class="toggle-desc-btn" onclick="toggleDesc(this)">Show description</button>
