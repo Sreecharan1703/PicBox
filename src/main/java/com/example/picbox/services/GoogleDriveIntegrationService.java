@@ -28,7 +28,7 @@ public class GoogleDriveIntegrationService {
     aiService aiservice;
     ImageService imageService;
 
-    GoogleDriveIntegrationService(aiService aiservice, ImageService imageService) {
+    GoogleDriveIntegrationService(aiService aiservice,ImageService imageService) {
         this.aiservice = aiservice;
         this.imageService = imageService;
     }
@@ -135,8 +135,10 @@ public class GoogleDriveIntegrationService {
         for(String id : ids) {
             try{
                 byte[]  imageData = downloadFile(client, id);
+                String fileName = getFileMetadata(client, id).getName();
+                String imageType = fileName.endsWith(".png") ? "image/png" : "image/jpeg";
                 String imageinBase64 = imageService.encodeImageToBase64(imageData);
-                String result = aiservice.genQuestion(level, imageinBase64);
+                String result = aiservice.genQuestion(level, imageinBase64, imageType);
                 questions.add(result);
             }
             catch(Exception e){

@@ -23,7 +23,7 @@ public class aiService {
         List<String> promptInfo = new ArrayList<>();
 
         for(File file : allFiles) {
-            String filename = file.getName();
+            String filename = "\"" + file.getName()+ "\"";
             promptInfo.add(filename);
         }
 
@@ -75,10 +75,12 @@ public class aiService {
         }
     }
 
-    public String genQuestion(int level, String imageinBase64) {
-        String levelDescription = "Assume user level is " + level + " out of 100.";
-        String prompt = levelDescription + "Generate 1 unique, challenging question based on the user level and the following image: " + imageinBase64 + " . " +
-                "Do not include any markdown formatting, conversational text, or explanations.";
+    public String genQuestion(int level, String imageinBase64, String imageType) {
+        String prompt = "Assume user level is " + level + " out of 100." + "Generate 1 unique, challenging question based on the user level and the Provided image."+
+                "Do not include any markdown formatting, conversational text, or explanations." + 
+                "Image mime type is " + imageType + " and the image is provided in base64 format: " +
+                imageinBase64 + " .";
+
         return callAi(prompt);
     }
 }

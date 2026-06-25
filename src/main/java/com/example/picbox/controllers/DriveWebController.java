@@ -1,7 +1,6 @@
 package com.example.picbox.controllers;
 
 import com.example.picbox.services.GoogleDriveIntegrationService;
-import com.example.picbox.services.aiService;
 import com.google.api.services.drive.model.File;
 
 import lombok.var;
@@ -125,12 +124,13 @@ public class DriveWebController {
 
 
     @GetMapping("/quiz")
-    public String makeQuiz(@RequestParam String imageIds,Model model,
+    public String makeQuiz(@RequestParam("imageId") List<String> imageIds,
+        Model model,
         @AuthenticationPrincipal OAuth2User oauth2User,
         @RegisteredOAuth2AuthorizedClient("google") OAuth2AuthorizedClient authorizedClient,
-        @RequestParam int level
+        @RequestParam("level") int level
     ) {
-        String[] ids = imageIds.split("&");
+        String[] ids = imageIds.toArray(new String[0]);
         for(String id : ids) {
             id = id.replace("imageId=", "");
         }
