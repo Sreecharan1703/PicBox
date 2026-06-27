@@ -12,6 +12,7 @@ import com.google.auth.oauth2.GoogleCredentials;
 
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -135,10 +136,12 @@ public class GoogleDriveIntegrationService {
         for(String id : ids) {
             try{
                 byte[]  imageData = downloadFile(client, id);
+                ByteArrayResource byteArrayResource = new ByteArrayResource(imageData);
+
                 String fileName = getFileMetadata(client, id).getName();
                 String imageType = fileName.endsWith(".png") ? "image/png" : "image/jpeg";
-                String imageinBase64 = imageService.encodeImageToBase64(imageData);
-                String result = aiservice.genQuestion(level, imageinBase64, imageType);
+
+                String result = aiservice.genQuestion(level, byteArrayResource, imageType);
                 questions.add(result);
             }
             catch(Exception e){

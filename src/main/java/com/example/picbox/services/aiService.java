@@ -3,7 +3,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
+import org.springframework.util.MimeType;
+
 import com.google.api.services.drive.model.File;
 
 import lombok.extern.slf4j.Slf4j;
@@ -57,12 +60,19 @@ public class aiService {
     }
 
 
-    public String callAi(String prompt) {
-        log.info("Sending prompt to AI: " + prompt);
+    public String genQuestion(int level, ByteArrayResource byteArrayResource, String imageType) {
+        String prompt ="Generate 1 unique question based on the Provided image. "+
+                "question difficulty should be " + level + " out of 100. " +
+                "Do not include any markdown formatting, conversational text, or explanations.";
+
+        MimeType mediaType = MimeType.valueOf(imageType);
 
         try {
             String aiResponse = this.chatClient.prompt()
-                    .user(prompt)
+                    .user(u-> u
+                        .text(prompt)
+                        .media(mediaType,byteArrayResource)
+                    )
                     .call()
                     .content();
 
@@ -73,14 +83,5 @@ public class aiService {
             log.error("Error during AI response generation: " + ex.getMessage());
             return ""; 
         }
-    }
-
-    public String genQuestion(int level, String imageinBase64, String imageType) {
-        String prompt = "Assume user level is " + level + " out of 100." + "Generate 1 unique, challenging question based on the user level and the Provided image."+
-                "Do not include any markdown formatting, conversational text, or explanations." + 
-                "Image mime type is " + imageType + " and the image is provided in base64 format: " +
-                imageinBase64 + " .";
-
-        return callAi(prompt);
     }
 }
